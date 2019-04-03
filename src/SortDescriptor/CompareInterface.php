@@ -21,19 +21,24 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\SortDescriptor;
+
+use TASoft\Collection\CollectionInterface;
 
 /**
- * Marks an object as collection
+ * The compare interface makrs objects that can be compared against something else.
+ * Using default sort descriptors, they can be used to compare complex data structures.
+ *
  * @package TASoft\Collection
  */
-interface CollectionInterface extends \ArrayAccess
+interface CompareInterface
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
-
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+    /**
+     * Compare otherValue against instance.
+     *
+     * @param $otherValue
+     * @return int
+     * @see CollectionInterface::ORDERED_* constants
+     */
+    public function compare($otherValue): int;
 }

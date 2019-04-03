@@ -23,17 +23,18 @@
 
 namespace TASoft\Collection;
 
-/**
- * Marks an object as collection
- * @package TASoft\Collection
- */
-interface CollectionInterface extends \ArrayAccess
-{
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
 
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+class DefaultCollection extends AbstractMutableCollection
+{
+    public function objectsAreEqual($object1, $object2): bool
+    {
+        if($object1 instanceof IsEqualStringInterface && is_string($object2))
+            return $object1->isEqualToString($object2);
+        elseif ($object1 instanceof IsEqualClassInterface && $object2 instanceof $object1)
+            return $object1->isEqualTo($object2);
+        elseif ($object1 instanceof IsEqualInterface)
+            return $object1->isEqual($object2);
+
+        return $object1 === $object2;
+    }
 }

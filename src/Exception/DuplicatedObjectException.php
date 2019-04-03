@@ -21,19 +21,27 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Exception;
 
-/**
- * Marks an object as collection
- * @package TASoft\Collection
- */
-interface CollectionInterface extends \ArrayAccess
+
+class DuplicatedObjectException extends CollectionException
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
+    private $object;
 
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+    /**
+     * @return mixed
+     */
+    public function getObject()
+    {
+        return $this->object;
+    }
+
+    /**
+     * @param mixed $object
+     */
+    public function setObject($object)
+    {
+        $this->object = $object;
+    }
+
 }

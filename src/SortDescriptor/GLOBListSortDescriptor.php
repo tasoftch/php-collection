@@ -21,19 +21,13 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\SortDescriptor;
 
-/**
- * Marks an object as collection
- * @package TASoft\Collection
- */
-interface CollectionInterface extends \ArrayAccess
+
+class GLOBListSortDescriptor extends LiteralListSortDescriptor
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
-
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+    protected function inList($listValue, $AorB): bool
+    {
+        return fnmatch($listValue, $AorB, $this->isCaseSensitive() ? 0 : FNM_CASEFOLD);
+    }
 }

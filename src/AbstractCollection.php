@@ -31,16 +31,12 @@ use TASoft\Collection\Exception\ImmutableCollectionException;
  */
 abstract class AbstractCollection implements CollectionInterface, \IteratorAggregate, \Countable
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
-
-    const FILTER_DENY = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_ACCEPT = 1;
-
     protected $collection;
 
+    /**
+     * Pass any iterable into a collection to initialize it.
+     * @param array $collection
+     */
     public function __construct($collection = [])
     {
         if($collection instanceof AbstractCollection)
@@ -53,28 +49,52 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         }
     }
 
+    /**
+     * Make collection countable
+     * @return int
+     */
     public function count()
     {
         return count($this->collection);
     }
 
-
+    /**
+     * Make collection iterable
+     * @return \ArrayIterator|\Traversable
+     */
     public function getIterator()
     {
         return new \ArrayIterator($this->collection);
     }
 
-
+    /**
+     * Make collection array accessable
+     *
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset)
     {
         return isset($this->collection[$offset]);
     }
 
+    /**
+     * Make collection array accessable
+     *
+     * @param mixed $offset
+     * @return mixed
+     */
     public function &offsetGet($offset)
     {
         return $this->collection[$offset];
     }
 
+    /**
+     * Make collection array accessable
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value)
     {
         $e = new ImmutableCollectionException("Collection is immutable");
@@ -82,6 +102,11 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         throw $e;
     }
 
+    /**
+     * Make collection array accessable
+     *
+     * @param mixed $offset
+     */
     public function offsetUnset($offset)
     {
         $e = new ImmutableCollectionException("Collection is immutable");
@@ -89,6 +114,12 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         throw $e;
     }
 
+    /**
+     * Checks, if the collection contains an object
+     *
+     * @param $object
+     * @return bool
+     */
     public function contains($object) {
         foreach($this->collection as $item) {
             if($this->objectsAreEqual($item ,$object))
@@ -97,6 +128,13 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         return false;
     }
 
+    /**
+     * Enumerates all objects in collection.
+     * Passes three arguments into callback: $object, $index, &$stop as boolean to break enumeration
+     *
+     * @param callable $callback
+     * @see AbstractCollection::enumerateReverse()
+     */
     public function enumerate(callable $callback) {
         $stop = false;
         foreach($this->collection as $idx => $object) {
@@ -105,6 +143,12 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         }
     }
 
+    /**
+     * Enumerates all objects in collection in reversed order.
+     * Passes three arguments into callback: $object, $index, &$stop as boolean to break enumeration
+     *
+     * @param callable $callback
+     */
     public function enumerateReverse(callable $callback) {
         $stop = false;
         foreach(array_reverse($this->collection) as $idx => $object) {
@@ -113,6 +157,12 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         }
     }
 
+    /**
+     * Searches index of an object
+     *
+     * @param $object
+     * @return int|null|string
+     */
     public function indexOf($object) {
         foreach($this->collection as $idx => $o) {
             if($this->objectsAreEqual($o, $object))
@@ -121,6 +171,12 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         return NULL;
     }
 
+    /**
+     * Searches all indexes of an object
+     *
+     * @param $object
+     * @return array
+     */
     public function indexesOf($object) {
         $indexes = [];
         foreach($this->collection as $idx => $o) {
@@ -130,8 +186,31 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         return $indexes;
     }
 
+    /**
+     * This method is called to decide if two objects are equal
+     *
+     * @param $object1
+     * @param $object2
+     * @return bool
+     */
     abstract public function objectsAreEqual($object1, $object2): bool;
 
+    /**
+     * Returns true, if value is a value that can be used as collection
+     *
+     * @param $value
+     * @return bool
+     */
+    public static function isCollection($value): bool {
+        return is_iterable($value);
+    }
+
+    /**
+     * Tries to convert anything into an array
+     *
+     * @param $anything
+     * @return array
+     */
     public static function toArray($anything) {
         if(is_array($anything))
             return $anything;
@@ -150,13 +229,19 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         return (array) $anything;
     }
 
+    /**
+     * Tries to convert anything into a collection
+     *
+     * @param $anything
+     * @return null|CollectionInterface
+     */
     public static function toCollection($anything): ?CollectionInterface {
         if($anything instanceof CollectionInterface)
             return $anything;
         if(is_object($anything) && method_exists($anything, 'toCollection'))
             return $anything->toCollection();
         if(is_iterable($anything)) {
-
+            return new static($anything);
         }
         return NULL;
     }

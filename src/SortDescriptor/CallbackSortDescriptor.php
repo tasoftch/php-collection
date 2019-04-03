@@ -21,19 +21,38 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\SortDescriptor;
 
 /**
- * Marks an object as collection
+ * Define a callback to compare.
+ * This callback is forced. Objects implementing CompareInterface are not asked anymore.
+ *
  * @package TASoft\Collection
  */
-interface CollectionInterface extends \ArrayAccess
+class CallbackSortDescriptor extends DefaultSortDescriptor
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
+    /** @var callable */
+    private $callback;
 
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+    public function __construct(callable $callback, bool $ascending = true)
+    {
+        parent::__construct($ascending);
+        $this->callback = $callback;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function compare($A, $B): int
+    {
+        return $this->getCallback()($this->getComparisonValue($A), $this->getComparisonValue($B));
+    }
+
+    /**
+     * @return callable
+     */
+    public function getCallback(): callable
+    {
+        return $this->callback;
+    }
 }

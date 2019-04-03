@@ -23,27 +23,56 @@
 
 namespace TASoft\Collection\SortDescriptor;
 
-use TASoft\Collection\CollectionInterface;
-
 /**
- * Describes, how a collection of values should be ordered
+ * The default sort descriptor just compare using PHP built in <=> operator.
+ * If a value implements CompareInterface, this instance is asked to compare against other value.
+ *
  * @package TASoft\Collection
  */
-interface SortDescriptorInterface
+class DefaultSortDescriptor implements SortDescriptorInterface
 {
-    /**
-     * Return true, to order ascending, false for descending
-     * @return bool
-     */
-    public function isAscending(): bool;
+    private $ascending = true;
 
     /**
-     * Compare A against B and return -1 for descending, 0 for same and 1 for ascending
+     * DefaultSortDescriptor constructor.
+     * @param bool $ascending
+     */
+    public function __construct(bool $ascending = true)
+    {
+        $this->ascending = $ascending;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAscending(): bool
+    {
+        return $this->ascending;
+    }
+
+    /**
+     * If $A or $B under compare do not implement CompareInterface, this method is called to obtain the comparison value.
+     * This is useful comparing data structures, to define which properties should be compared.
+     *
+     * @param $AorB
+     * @return mixed
+     */
+    protected function getComparisonValue($AorB) {
+        return $AorB;
+    }
+
+    /**
+     * If A implements CompareInterface, it's up to it to compare against $B.
+     * Otherwise the built in <=> operator will compare $A against $B
      *
      * @param $A
      * @param $B
      * @return int
-     * @see CollectionInterface::ORDERED_* constants
      */
-    public function compare($A, $B): int;
+    public function compare($A, $B): int {
+        if($A instanceof CompareInterface)
+            return $A->compare($B);
+
+        return $this->getComparisonValue($A) <=> $this->getComparisonValue($B);
+    }
 }

@@ -21,19 +21,46 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\SortDescriptor;
 
 /**
- * Marks an object as collection
+ * The case sensitive sort descriptor can distinguish between comparing case sensitive and case insensitive.
+ *
  * @package TASoft\Collection
  */
-interface CollectionInterface extends \ArrayAccess
+class CaseSensitiveSortDescriptor extends DefaultSortDescriptor
 {
-    const ORDERED_DESCENDING = -1;
-    const ORDERED_SAME = 0;
-    const ORDERED_ASCENDING = 1;
+    private $caseSensitive;
 
-    const FILTER_REJECT = -1;
-    const FILTER_ABSTAIN = 0;
-    const FILTER_RETAIN = 1;
+    /**
+     * CaseSensitiveSortDescriptor constructor.
+     * @param bool $caseSensitive
+     * @param bool $ascending
+     */
+    public function __construct(bool $caseSensitive = true, bool $ascending = true)
+    {
+        parent::__construct($ascending);
+        $this->caseSensitive = $caseSensitive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCaseSensitive(): bool
+    {
+        return $this->caseSensitive;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function compare($A, $B): int
+    {
+        if($A instanceof CompareInterface)
+            return $A->compare($B);
+
+        return $this->isCaseSensitive() ?
+            strcmp($this->getComparisonValue($A), $this->getComparisonValue($B)) :
+            strcasecmp($this->getComparisonValue($A), $this->getComparisonValue($B));
+    }
 }
