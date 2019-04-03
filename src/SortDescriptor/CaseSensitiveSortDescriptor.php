@@ -23,6 +23,8 @@
 
 namespace TASoft\Collection\SortDescriptor;
 
+use TASoft\Collection\Element\CompareInterface;
+
 /**
  * The case sensitive sort descriptor can distinguish between comparing case sensitive and case insensitive.
  *

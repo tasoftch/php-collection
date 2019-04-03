@@ -24,6 +24,10 @@
 namespace TASoft\Collection;
 
 
+use TASoft\Collection\Element\IsEqualClassInterface;
+use TASoft\Collection\Element\IsEqualInterface;
+use TASoft\Collection\Element\IsEqualStringInterface;
+
 class DefaultCollection extends AbstractMutableCollection
 {
     public function objectsAreEqual($object1, $object2): bool

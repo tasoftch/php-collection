@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Element;
 
 
 interface IsEqualClassInterface

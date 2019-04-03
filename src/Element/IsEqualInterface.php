@@ -21,10 +21,10 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Element;
 
 
-interface IsEqualStringInterface
+interface IsEqualInterface
 {
-    public function isEqualToString(string $string): bool;
+    public function isEqual($value): bool;
 }

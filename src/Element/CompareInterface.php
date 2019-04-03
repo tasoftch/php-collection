@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection\SortDescriptor;
+namespace TASoft\Collection\Element;
 
 use TASoft\Collection\CollectionInterface;
 

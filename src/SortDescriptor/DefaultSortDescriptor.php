@@ -23,6 +23,8 @@
 
 namespace TASoft\Collection\SortDescriptor;
 
+use TASoft\Collection\Element\CompareInterface;
+
 /**
  * The default sort descriptor just compare using PHP built in <=> operator.
  * If a value implements CompareInterface, this instance is asked to compare against other value.
