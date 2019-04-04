@@ -24,23 +24,23 @@
 namespace TASoft\Collection\Element;
 
 
-class PriorityCollectionElement
+class PriorityCollectionElement implements ContainerElementInterface
 {
     /** @var int|float */
     private $priority;
 
     /** @var mixed */
-    private $object;
+    private $element;
 
     /**
      * PriorityCollectionItem constructor.
      * @param float|int $priority
-     * @param mixed $object
+     * @param mixed $element
      */
-    public function __construct($object, $priority = 0)
+    public function __construct($element, $priority = 0)
     {
         $this->priority = $priority;
-        $this->object = $object;
+        $this->element = $element;
     }
 
     /**
@@ -54,8 +54,8 @@ class PriorityCollectionElement
     /**
      * @return mixed
      */
-    public function getObject()
+    public function getElement()
     {
-        return $this->object;
+        return $this->element;
     }
 }

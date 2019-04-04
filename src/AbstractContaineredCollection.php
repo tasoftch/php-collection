@@ -124,10 +124,11 @@ abstract class AbstractContaineredCollection extends AbstractCollection implemen
      *
      * @return ContainerElementInterface|null
      */
-    abstract function getContainerWrapper($element, $info): ?ContainerElementInterface;
+    abstract protected function getContainerWrapper($element, $info): ?ContainerElementInterface;
 
     /**
      * Add an element to the collection
+     * This method is protected because you should declare your own add and remove methods.
      *
      * @param $element
      * @param null $info

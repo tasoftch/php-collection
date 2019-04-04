@@ -47,8 +47,14 @@ abstract class AbstractOrderedCollection extends AbstractContaineredCollection
      */
     public function getOrderedElements(): array
     {
-        if($this->_orderedCollection === NULL)
-            $this->_orderedCollection = $this->orderCollection($this->collection);
+        if($this->_orderedCollection === NULL) {
+            $this->_orderedCollection = array_map(
+                function (ContainerElementInterface $wrapper) {
+                    return $wrapper->getElement();
+                },
+                $this->orderCollection($this->collection)
+            );
+        }
         return $this->_orderedCollection;
     }
 
@@ -73,8 +79,7 @@ abstract class AbstractOrderedCollection extends AbstractContaineredCollection
 
     /**
      * This method is called to order the collection
-     * Please note that it MUST return the elements and not the wrappers!
-     * The elements returned by this methods should be the original elements the addElement method got.
+     * It will receive the wrappers and MUST return the wrappers. They are resolved after ordering.
      *
      * @param ContainerElementInterface[]
      * @return array

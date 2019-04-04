@@ -23,25 +23,47 @@
 
 namespace TASoft\Collection;
 
-
+use TASoft\Collection\Element\ContainerElementInterface;
 use TASoft\Collection\Element\PriorityCollectionElement;
 
-class PriorityCollection extends AbstractContaineredCollection
+class PriorityCollection extends AbstractOrderedCollection
 {
     use DefaultCollectionEqualObjectsTrait;
 
-
-    protected function orderCollection(): array
+    protected function getContainerWrapper($element, $info): ?ContainerElementInterface
     {
-        // TODO: Implement orderCollection() method.
+        return new PriorityCollectionElement($element, $info);
     }
 
+    protected function orderCollection(array $wrappers): array
+    {
+        usort($wrappers, function(PriorityCollectionElement $A, PriorityCollectionElement $B) {
+            return $A->getPriority() <=> $B->getPriority();
+        });
+        return $wrappers;
+    }
 
-
-    public function addElements(int $priority, ...$objects) {
-        foreach($objects as &$object) {
-            $object = new PriorityCollectionElement($object, $priority);
+    /**
+     * Adds all passed objects with priority
+     *
+     * @param int $priority
+     * @param mixed ...$objects
+     */
+    public function add(int $priority, ...$objects) {
+        foreach($objects as $object) {
+            $this->addElement($object, $priority);
         }
     }
 
+    /**
+     * @param $object
+     */
+    public function remove($object) {
+        $this->collection = array_filter($this->collection, function(PriorityCollectionElement $wrapper) use ($object) {
+            if($this->objectsAreEqual($wrapper->getElement(), $object))
+                return true;
+            return false;
+        });
+        $this->noteCollectionChanged();
+    }
 }
