@@ -31,6 +31,12 @@ abstract class AbstractMutableCollection extends AbstractCollection
 {
     private $acceptingDuplicates = true;
 
+    public function __construct($collection = [], bool $acceptingDuplicates = true)
+    {
+        parent::__construct($collection);
+        $this->acceptingDuplicates = $acceptingDuplicates;
+    }
+
     public function offsetSet($offset, $value)
     {
         if(is_null($offset))

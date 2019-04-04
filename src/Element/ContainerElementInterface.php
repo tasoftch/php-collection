@@ -21,12 +21,13 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Element;
 
-
-
-
-class DefaultCollection extends AbstractMutableCollection
+/**
+ * Elements in containered collections are wrapped in objects of  class ContainerElementInterfaces.
+ * @package TASoft\Collection
+ */
+interface ContainerElementInterface
 {
-    use DefaultCollectionEqualObjectsTrait;
+    public function getElement();
 }

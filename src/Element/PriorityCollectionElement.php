@@ -21,12 +21,41 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Element;
 
 
-
-
-class DefaultCollection extends AbstractMutableCollection
+class PriorityCollectionElement
 {
-    use DefaultCollectionEqualObjectsTrait;
+    /** @var int|float */
+    private $priority;
+
+    /** @var mixed */
+    private $object;
+
+    /**
+     * PriorityCollectionItem constructor.
+     * @param float|int $priority
+     * @param mixed $object
+     */
+    public function __construct($object, $priority = 0)
+    {
+        $this->priority = $priority;
+        $this->object = $object;
+    }
+
+    /**
+     * @return float|int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getObject()
+    {
+        return $this->object;
+    }
 }

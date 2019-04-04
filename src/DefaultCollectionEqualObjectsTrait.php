@@ -23,10 +23,21 @@
 
 namespace TASoft\Collection;
 
+use TASoft\Collection\Element\IsEqualClassInterface;
+use TASoft\Collection\Element\IsEqualInterface;
+use TASoft\Collection\Element\IsEqualStringInterface;
 
-
-
-class DefaultCollection extends AbstractMutableCollection
+trait DefaultCollectionEqualObjectsTrait
 {
-    use DefaultCollectionEqualObjectsTrait;
+    public function objectsAreEqual($object1, $object2): bool
+    {
+        if($object1 instanceof IsEqualStringInterface && is_string($object2))
+            return $object1->isEqualToString($object2);
+        elseif ($object1 instanceof IsEqualClassInterface && $object2 instanceof $object1)
+            return $object1->isEqualTo($object2);
+        elseif ($object1 instanceof IsEqualInterface)
+            return $object1->isEqual($object2);
+
+        return $object1 === $object2;
+    }
 }

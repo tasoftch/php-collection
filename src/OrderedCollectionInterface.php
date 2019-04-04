@@ -23,10 +23,17 @@
 
 namespace TASoft\Collection;
 
-
-
-
-class DefaultCollection extends AbstractMutableCollection
+/**
+ * Ordered collection can be used to automatically order collections on adding and removing elements.
+ *
+ * @package TASoft\Collection
+ */
+interface OrderedCollectionInterface
 {
-    use DefaultCollectionEqualObjectsTrait;
+    /**
+     * Get ordered contents of collection
+     *
+     * @return array
+     */
+    public function getOrderedElements(): array;
 }

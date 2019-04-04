@@ -21,12 +21,27 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection;
+namespace TASoft\Collection\Exception;
 
 
-
-
-class DefaultCollection extends AbstractMutableCollection
+class InvalidCollectionElementException extends CollectionException
 {
-    use DefaultCollectionEqualObjectsTrait;
+    private $element;
+
+    /**
+     * @return mixed
+     */
+    public function getElement()
+    {
+        return $this->element;
+    }
+
+    /**
+     * @param mixed $element
+     */
+    public function setElement($element)
+    {
+        $this->element = $element;
+    }
+
 }

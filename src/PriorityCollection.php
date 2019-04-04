@@ -24,9 +24,24 @@
 namespace TASoft\Collection;
 
 
+use TASoft\Collection\Element\PriorityCollectionElement;
 
-
-class DefaultCollection extends AbstractMutableCollection
+class PriorityCollection extends AbstractContaineredCollection
 {
     use DefaultCollectionEqualObjectsTrait;
+
+
+    protected function orderCollection(): array
+    {
+        // TODO: Implement orderCollection() method.
+    }
+
+
+
+    public function addElements(int $priority, ...$objects) {
+        foreach($objects as &$object) {
+            $object = new PriorityCollectionElement($object, $priority);
+        }
+    }
+
 }
