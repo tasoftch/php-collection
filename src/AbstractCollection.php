@@ -84,9 +84,9 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param mixed $offset
      * @return mixed
      */
-    public function &offsetGet($offset)
+    public function offsetGet($offset)
     {
-        return $this->collection[$offset];
+        return $this->collection[$offset] ?? NULL;
     }
 
     /**
@@ -211,11 +211,11 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param $anything
      * @return array
      */
-    public static function toArray($anything) {
+    public static function makeArray($anything) {
         if(is_array($anything))
             return $anything;
 
-        if(is_object($anything) && method_exists($anything, 'toArray'))
+        if(is_object($anything) && method_exists($anything, 'toArray') && !($anything instanceof self))
             return $anything->toArray();
 
         if(is_iterable($anything)) {
@@ -229,13 +229,17 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
         return (array) $anything;
     }
 
+    public function toArray() {
+        return static::makeArray($this);
+    }
+
     /**
      * Tries to convert anything into a collection
      *
      * @param $anything
      * @return null|CollectionInterface
      */
-    public static function toCollection($anything): ?CollectionInterface {
+    public static function makeCollection($anything): ?CollectionInterface {
         if($anything instanceof CollectionInterface)
             return $anything;
         if(is_object($anything) && method_exists($anything, 'toCollection'))

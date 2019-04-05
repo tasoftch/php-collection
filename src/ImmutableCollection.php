@@ -21,54 +21,10 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection\Element;
+namespace TASoft\Collection;
 
 
-class PriorityCollectionElement implements ContainerElementInterface
+class ImmutableCollection extends AbstractCollection
 {
-    /** @var int|float */
-    private $priority;
-
-    /** @var mixed */
-    private $element;
-
-    /** @var int  */
-    private $instanceCount = 0;
-
-    /**
-     * PriorityCollectionItem constructor.
-     * @param float|int $priority
-     * @param mixed $element
-     */
-    public function __construct($element, $priority = 0)
-    {
-        $this->priority = $priority;
-        $this->element = $element;
-        static $instanceCount = 1;
-        $this->instanceCount = $instanceCount++;
-    }
-
-    /**
-     * @return float|int
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getElement()
-    {
-        return $this->element;
-    }
-
-    /**
-     * @return int
-     */
-    public function getInstanceCount(): int
-    {
-        return $this->instanceCount;
-    }
+    use StrictEqualObjectsTrait;
 }

@@ -21,54 +21,43 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection\Element;
+/**
+ * PriorityCollectionTest.php
+ * php-collection
+ *
+ * Created on 2019-04-04 22:06 by thomas
+ */
 
+use TASoft\Collection\PriorityCollection;
+use PHPUnit\Framework\TestCase;
 
-class PriorityCollectionElement implements ContainerElementInterface
+class PriorityCollectionTest extends TestCase
 {
-    /** @var int|float */
-    private $priority;
+    public function testConstruction() {
+        $collection = new PriorityCollection();
+        $this->assertEmpty($collection);
 
-    /** @var mixed */
-    private $element;
+        $collection = new PriorityCollection(3, [1, 2, 3]);
+        $this->assertCount(3, $collection);
 
-    /** @var int  */
-    private $instanceCount = 0;
-
-    /**
-     * PriorityCollectionItem constructor.
-     * @param float|int $priority
-     * @param mixed $element
-     */
-    public function __construct($element, $priority = 0)
-    {
-        $this->priority = $priority;
-        $this->element = $element;
-        static $instanceCount = 1;
-        $this->instanceCount = $instanceCount++;
+        $this->assertEquals([1, 2, 3], $collection->toArray());
     }
 
-    /**
-     * @return float|int
-     */
-    public function getPriority()
+    public function testAdd()
     {
-        return $this->priority;
+        $collection = new PriorityCollection();
+        $collection->add(3, [5, 7]);
+        $collection->add(1, 8, 7);
+
+        $this->assertEquals([8, 7, [5, 7]], $collection->toArray());
     }
 
-    /**
-     * @return mixed
-     */
-    public function getElement()
+    public function testRemove()
     {
-        return $this->element;
-    }
+        $collection = new PriorityCollection(5, [1, 2, 3]);
+        $collection->remove(2);
 
-    /**
-     * @return int
-     */
-    public function getInstanceCount(): int
-    {
-        return $this->instanceCount;
+        $this->assertCount(2, $collection);
+        $this->assertEquals([1, 3], array_values($collection->toArray()));
     }
 }

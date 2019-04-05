@@ -28,7 +28,14 @@ use TASoft\Collection\Element\PriorityCollectionElement;
 
 class PriorityCollection extends AbstractOrderedCollection
 {
-    use DefaultCollectionEqualObjectsTrait;
+    use StrictEqualObjectsTrait;
+
+    public function __construct(int $priority = NULL, $collection = [], bool $acceptingDuplicates = true)
+    {
+        parent::__construct([], $acceptingDuplicates);
+        if(NULL !== $priority && $collection)
+            $this->add($priority, ...$collection);
+    }
 
     protected function getContainerWrapper($element, $info): ?ContainerElementInterface
     {
@@ -38,7 +45,10 @@ class PriorityCollection extends AbstractOrderedCollection
     protected function orderCollection(array $wrappers): array
     {
         usort($wrappers, function(PriorityCollectionElement $A, PriorityCollectionElement $B) {
-            return $A->getPriority() <=> $B->getPriority();
+            $cmp = $A->getPriority() <=> $B->getPriority();
+            if($cmp == 0)
+                return $A->getInstanceCount() <=> $B->getInstanceCount();
+            return $cmp;
         });
         return $wrappers;
     }
@@ -56,13 +66,11 @@ class PriorityCollection extends AbstractOrderedCollection
     }
 
     /**
-     * @param $object
+     * @param $element
      */
-    public function remove($object) {
-        $this->collection = array_filter($this->collection, function(PriorityCollectionElement $wrapper) use ($object) {
-            if($this->objectsAreEqual($wrapper->getElement(), $object))
-                return true;
-            return false;
+    public function remove($element) {
+        $this->collection = array_filter($this->collection, function(PriorityCollectionElement $wrapper) use ($element) {
+            return !$this->objectsAreEqual($wrapper->getElement(), $element);
         });
         $this->noteCollectionChanged();
     }

@@ -23,8 +23,8 @@
 
 namespace TASoft\Collection;
 
-
 use TASoft\Collection\Element\ContainerElementInterface;
+use TASoft\Collection\Exception\DuplicatedObjectException;
 use TASoft\Collection\Exception\InvalidCollectionElementException;
 
 /**
@@ -33,7 +33,7 @@ use TASoft\Collection\Exception\InvalidCollectionElementException;
  *
  * @package TASoft\Collection
  */
-abstract class AbstractContaineredCollection extends AbstractCollection implements OrderedCollectionInterface
+abstract class AbstractContaineredCollection extends AbstractCollection
 {
     const INFO_INDEX_KEY = 'index-key';
 
@@ -51,15 +51,15 @@ abstract class AbstractContaineredCollection extends AbstractCollection implemen
             $this->collection = $collection->collection;
         elseif(is_iterable($collection)) {
             foreach($collection as $idx => $value)
-                $this->collection[$idx] = $value;
+                $this->addElement($value);
         } else {
             throw new \InvalidArgumentException("Constructor object for collection must be a collection or an iterable");
         }
     }
 
-    public function &offsetGet($offset)
+    public function offsetGet($offset)
     {
-        return $value = parent::offsetGet($offset) AND $value->getElement();
+        return ($value = parent::offsetGet($offset)) ? $value->getElement() : NULL;
     }
 
     public function contains($object)
@@ -133,22 +133,30 @@ abstract class AbstractContaineredCollection extends AbstractCollection implemen
      * @param $element
      * @param null $info
      * @throws InvalidCollectionElementException
+     * @return ContainerElementInterface
      */
-    protected function addElement($element, $info = NULL) {
+    protected function addElement($element, $info = NULL): ContainerElementInterface {
         $key = $info[ static::INFO_INDEX_KEY ] ?? NULL;
         unset($info[static::INFO_INDEX_KEY]);
 
         $wrapper = $this->getContainerWrapper($element, $info);
         if($wrapper instanceof ContainerElementInterface) {
-            if(NULL !== $key)
-                $this->collection[$key] = $wrapper;
-            else
-                $this->collection[] = $wrapper;
+            if($this->acceptsDuplicates() || !$this->contains($element)) {
+                if(NULL !== $key)
+                    $this->collection[$key] = $wrapper;
+                else
+                    $this->collection[] = $wrapper;
+            } else {
+                $e = new DuplicatedObjectException("Trying to add duplicate object");
+                $e->setObject($element);
+                throw $e;
+            }
         } else {
             $e = new InvalidCollectionElementException("Element could not be wrapped");
             $e->setElement($element);
             throw $e;
         }
+        return $wrapper;
     }
 
     /**
@@ -165,5 +173,41 @@ abstract class AbstractContaineredCollection extends AbstractCollection implemen
     public function setAcceptsDuplicates(bool $acceptingDuplicates)
     {
         $this->acceptingDuplicates = $acceptingDuplicates;
+    }
+
+    public function getIterator()
+    {
+        return new class($this->collection) implements \Iterator {
+            private $collection;
+            public function __construct($collection)
+            {
+                $this->collection = $collection;
+            }
+
+            public function current()
+            {
+                return current($this->collection)->getElement();
+            }
+
+            public function next()
+            {
+                return next($this->collection);
+            }
+
+            public function key()
+            {
+                return key($this->collection);
+            }
+
+            public function valid()
+            {
+                return $this->key() !== NULL;
+            }
+
+            public function rewind()
+            {
+                reset($this->collection);
+            }
+        };
     }
 }

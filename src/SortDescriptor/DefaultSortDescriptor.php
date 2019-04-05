@@ -75,6 +75,9 @@ class DefaultSortDescriptor implements SortDescriptorInterface
         if($A instanceof CompareInterface)
             return $A->compare($B);
 
+        if($B instanceof CompareInterface)
+            return -$B->compare($A);
+
         return $this->getComparisonValue($A) <=> $this->getComparisonValue($B);
     }
 }

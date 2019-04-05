@@ -26,5 +26,9 @@ namespace TASoft\Collection\Element;
 
 interface IsEqualClassInterface
 {
+    /**
+     * @param static $object
+     * @return bool
+     */
     public function isEqualTo($object): bool;
 }

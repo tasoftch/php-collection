@@ -23,11 +23,12 @@
 
 namespace TASoft\Collection;
 
+
 use TASoft\Collection\Element\IsEqualClassInterface;
 use TASoft\Collection\Element\IsEqualInterface;
 use TASoft\Collection\Element\IsEqualStringInterface;
 
-trait DefaultCollectionEqualObjectsTrait
+trait EqualObjectsTrait
 {
     public function objectsAreEqual($object1, $object2): bool
     {
@@ -37,7 +38,10 @@ trait DefaultCollectionEqualObjectsTrait
             return $object1->isEqualTo($object2);
         elseif ($object1 instanceof IsEqualInterface)
             return $object1->isEqual($object2);
-
-        return $object1 === $object2;
+        try {
+            return $object1 == $object2;
+        } catch (\Throwable $exception) {
+            return false;
+        }
     }
 }

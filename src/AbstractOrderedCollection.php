@@ -29,7 +29,7 @@ use TASoft\Collection\Element\ContainerElementInterface;
  * Use the ordered collection to maintain a structure defined by wrapped elements
  * @package TASoft\Collection
  */
-abstract class AbstractOrderedCollection extends AbstractContaineredCollection
+abstract class AbstractOrderedCollection extends AbstractContaineredCollection implements OrderedCollectionInterface
 {
     private $_orderedCollection;
 
@@ -70,10 +70,11 @@ abstract class AbstractOrderedCollection extends AbstractContaineredCollection
     /**
      * @inheritDoc
      */
-    protected function addElement($element, $info = NULL)
+    protected function addElement($element, $info = NULL): ContainerElementInterface
     {
-        parent::addElement($element, $info);
+        $el = parent::addElement($element, $info);
         $this->noteCollectionChanged();
+        return $el;
     }
 
 

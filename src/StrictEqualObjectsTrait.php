@@ -21,54 +21,23 @@
  * SOFTWARE.
  */
 
-namespace TASoft\Collection\Element;
+namespace TASoft\Collection;
 
+use TASoft\Collection\Element\IsEqualClassInterface;
+use TASoft\Collection\Element\IsEqualInterface;
+use TASoft\Collection\Element\IsEqualStringInterface;
 
-class PriorityCollectionElement implements ContainerElementInterface
+trait StrictEqualObjectsTrait
 {
-    /** @var int|float */
-    private $priority;
-
-    /** @var mixed */
-    private $element;
-
-    /** @var int  */
-    private $instanceCount = 0;
-
-    /**
-     * PriorityCollectionItem constructor.
-     * @param float|int $priority
-     * @param mixed $element
-     */
-    public function __construct($element, $priority = 0)
+    public function objectsAreEqual($object1, $object2): bool
     {
-        $this->priority = $priority;
-        $this->element = $element;
-        static $instanceCount = 1;
-        $this->instanceCount = $instanceCount++;
-    }
+        if($object1 instanceof IsEqualStringInterface && is_string($object2))
+            return $object1->isEqualToString($object2);
+        elseif ($object1 instanceof IsEqualClassInterface && $object2 instanceof $object1)
+            return $object1->isEqualTo($object2);
+        elseif ($object1 instanceof IsEqualInterface)
+            return $object1->isEqual($object2);
 
-    /**
-     * @return float|int
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getElement()
-    {
-        return $this->element;
-    }
-
-    /**
-     * @return int
-     */
-    public function getInstanceCount(): int
-    {
-        return $this->instanceCount;
+        return $object1 === $object2;
     }
 }

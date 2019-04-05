@@ -60,9 +60,11 @@ class CaseSensitiveSortDescriptor extends DefaultSortDescriptor
     {
         if($A instanceof CompareInterface)
             return $A->compare($B);
+        if($B instanceof CompareInterface)
+            return -$B->compare($A);
 
         return $this->isCaseSensitive() ?
-            strcmp($this->getComparisonValue($A), $this->getComparisonValue($B)) :
-            strcasecmp($this->getComparisonValue($A), $this->getComparisonValue($B));
+            min(1, max(-1, strcmp($this->getComparisonValue($A), $this->getComparisonValue($B)))) :
+            min(1, max(-1, strcasecmp($this->getComparisonValue($A), $this->getComparisonValue($B))));
     }
 }

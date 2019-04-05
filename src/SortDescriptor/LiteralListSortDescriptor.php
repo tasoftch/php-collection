@@ -49,7 +49,7 @@ class LiteralListSortDescriptor extends CaseSensitiveSortDescriptor
      * @return bool
      */
     protected function inList($listValue, $AorB): bool {
-        return $this->isCaseSensitive() ? strcmp($listValue, $AorB) : strcasecmp($listValue, $AorB);
+        return $this->isCaseSensitive() ? strcmp($listValue, $AorB) == 0 : strcasecmp($listValue, $AorB) == 0;
     }
 
     /**

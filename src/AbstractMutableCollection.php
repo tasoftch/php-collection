@@ -64,14 +64,12 @@ abstract class AbstractMutableCollection extends AbstractCollection
 
     public function remove($object) {
         $this->collection = array_filter($this->collection, function($v) use ($object) {
-            if($this->objectsAreEqual($v, $object))
-                return true;
-            return false;
+            return !$this->objectsAreEqual($v, $object);
         });
     }
 
     public function sort(array $sortDescriptors, bool $sortByIndexes = false) {
-        $this::sortCollection( $this->collection, $sortDescriptors, $sortByIndexes );
+        $this->collection = $this::sortCollection( $this->collection, $sortDescriptors, $sortByIndexes );
     }
 
     public function filter(callable $filter = NULL) {
@@ -111,6 +109,7 @@ abstract class AbstractMutableCollection extends AbstractCollection
             uksort($collection, $sorter);
         else
             usort($collection, $sorter);
+        return $collection;
     }
 
     /**

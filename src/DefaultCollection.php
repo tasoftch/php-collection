@@ -28,5 +28,5 @@ namespace TASoft\Collection;
 
 class DefaultCollection extends AbstractMutableCollection
 {
-    use DefaultCollectionEqualObjectsTrait;
+    use StrictEqualObjectsTrait;
 }
