@@ -26,6 +26,11 @@ namespace TASoft\Collection;
 use TASoft\Collection\Element\ContainerElementInterface;
 use TASoft\Collection\Element\TaggedCollectionElement;
 
+/**
+ * Tagged collections allow to assign tags to elements. You can search for elements by using tags.
+ *
+ * @package TASoft\Collection
+ */
 class TaggedCollection extends AbstractContaineredCollection
 {
     use StrictEqualObjectsTrait;
@@ -34,6 +39,13 @@ class TaggedCollection extends AbstractContaineredCollection
     private $_tags = [];
     private $_refs = [];
 
+    /**
+     * TaggedCollection constructor.
+     * @param array $collection
+     * @param bool $acceptingDuplicates
+     * @param bool $caseSensitive
+     * @param mixed ...$tags
+     */
     public function __construct($collection = [], bool $acceptingDuplicates = true, bool $caseSensitive = true, ...$tags)
     {
         parent::__construct([], $acceptingDuplicates);
@@ -52,12 +64,20 @@ class TaggedCollection extends AbstractContaineredCollection
         return $this->caseSensitive;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     protected function getContainerWrapper($element, $info): ?ContainerElementInterface
     {
         return new TaggedCollectionElement($element, array_shift($info));
     }
 
+    /**
+     * Add an element to the collection under tags, separated as arguments
+     *
+     * @param $element
+     * @param string ...$tags
+     */
     public function add($element, ...$tags)
     {
         if($tags) {
@@ -76,6 +96,12 @@ class TaggedCollection extends AbstractContaineredCollection
         }
     }
 
+    /**
+     * Yields elements under passed tag
+     *
+     * @param $tag
+     * @return \Generator
+     */
     public function yieldElements($tag) {
         if($references = $this->_tags[$this->isCaseSensitive() ? $tag : strtolower($tag)] ?? NULL) {
             foreach($references as $reference) {
@@ -84,6 +110,9 @@ class TaggedCollection extends AbstractContaineredCollection
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function offsetGet($offset)
     {
         $list = [];
@@ -93,6 +122,10 @@ class TaggedCollection extends AbstractContaineredCollection
         return $list ?: NULL;
     }
 
+    /**
+     * Removes passed element and related tags
+     * @param $element
+     */
     public function remove($element) {
         $this->collection = array_filter($this->collection, function(TaggedCollectionElement $wrapper) use ($element) {
             if($this->objectsAreEqual($wrapper->getElement(), $element)) {
@@ -109,6 +142,10 @@ class TaggedCollection extends AbstractContaineredCollection
         });
     }
 
+    /**
+     * Removes passed tags and elements, if they don't have any tag
+     * @param string ...$tags
+     */
     public function removeTags(...$tags) {
         foreach($tags as $tag) {
             $tag = $this->isCaseSensitive() ? $tag : strtolower($tag);
