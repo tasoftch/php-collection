@@ -52,8 +52,6 @@ print_r($collection->getOrderedElements());
   Bettina => 6
 ]
 */
-
-$this->assertEquals(['Foo', 'Bar', 'thomas', 'Bettina'], array_keys());
 ```
 Simply install it with composer:
 ````bin
