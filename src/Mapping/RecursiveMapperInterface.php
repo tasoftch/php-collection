@@ -1,0 +1,42 @@
+<?php
+/**
+ * Copyright (c) 2019 TASoft Applications, Th. Abplanalp <info@tasoft.ch>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+namespace TASoft\Collection\Mapping;
+
+/**
+ * Recursive mappers can decide if they want to iterate over children as well.
+ *
+ * @package TASoft\Collection
+ */
+interface RecursiveMapperInterface extends MapperInterface
+{
+    /**
+     * If retunring true, the mapper will recursively iterate over children as well.
+     *
+     * @param $key      // The collection key
+     * @param $value    // The collection value
+     * @param $depth    // The recursion depth. Root is 0
+     * @return bool
+     */
+    public function hasChildren($key, $value, int $depth): bool;
+}
