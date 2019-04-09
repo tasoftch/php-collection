@@ -31,7 +31,7 @@ use TASoft\Collection\Exception\ImmutableCollectionException;
  */
 abstract class AbstractCollection implements CollectionInterface, \IteratorAggregate, \Countable
 {
-    protected $collection;
+    protected $collection = [];
 
     /**
      * Pass any iterable into a collection to initialize it.
