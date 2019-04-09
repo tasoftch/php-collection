@@ -165,4 +165,13 @@ class TaggedCollection extends AbstractContaineredCollection
             }
         }
     }
+
+    /**
+     * Removes all elements from collection
+     */
+    public function clear() {
+        $this->collection = [];
+        $this->_refs = [];
+        $this->_tags = [];
+    }
 }

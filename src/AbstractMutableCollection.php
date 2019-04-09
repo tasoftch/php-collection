@@ -68,6 +68,13 @@ abstract class AbstractMutableCollection extends AbstractCollection
         });
     }
 
+    /**
+     * Removes all element from the collection
+     */
+    public function clear() {
+        $this->collection = [];
+    }
+
     public function sort(array $sortDescriptors, bool $sortByIndexes = false) {
         $this->collection = $this::sortCollection( $this->collection, $sortDescriptors, $sortByIndexes );
     }
@@ -79,7 +86,7 @@ abstract class AbstractMutableCollection extends AbstractCollection
     public static function filterCollection(iterable $collection, callable $filterCallback = NULL, int $depth = 0) {
         $list = [];
         if(!is_callable($filterCallback))
-            $filterCallback = function($value, $d) { return $value ? true : false; };
+            $filterCallback = function($value) { return $value ? true : false; };
 
         foreach($collection as $key => $value) {
             if(is_iterable($value)) {

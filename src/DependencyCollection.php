@@ -25,7 +25,6 @@ namespace TASoft\Collection;
 
 
 use TASoft\Collection\Element\DependencyCollectonElement;
-use TASoft\Collection\Exception\CircularDependencyException;
 
 class DependencyCollection extends AbstractDependencyCollection
 {

@@ -74,4 +74,12 @@ class PriorityCollection extends AbstractOrderedCollection
         });
         $this->noteCollectionChanged();
     }
+
+    /**
+     * Removes all elements from collection
+     */
+    public function clear() {
+        $this->collection = [];
+        $this->noteCollectionChanged();
+    }
 }

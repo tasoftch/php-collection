@@ -230,6 +230,14 @@ abstract class AbstractDependencyCollection extends AbstractOrderedCollection
     }
 
     /**
+     * Removes all elements from collection
+     */
+    public function clear() {
+        $this->collection = [];
+        $this->noteCollectionChanged();
+    }
+
+    /**
      * Removes all occurrences holding element
      *
      * @param $element
