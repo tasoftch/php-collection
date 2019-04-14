@@ -48,36 +48,37 @@ class CollectionMapping
      */
     public function mapCollection(iterable $collection) {
         $mapper = $this->getMapper();
-        $handler = function($key, $value, $depth = 0) use ($mapper, &$handler) {
+
+        $iteration = function($collection, $depth = 0) use (&$handler) {
+            if(is_array($collection)) {
+                foreach($collection as $key => &$value) {
+                    $value = $handler($key, $value, $depth);
+                }
+            } else {
+                $changes = [];
+                foreach($collection as $key => $value) {
+                    $val = $handler($key, $value, $depth);
+                    if($val !== $value)
+                        $changes[$key] = $val;
+                }
+                if($changes) {
+                    foreach($changes as $key => $value)
+                        $collection[$key] = $value;
+                }
+            }
+            return $collection;
+        };
+
+        $handler = function($key, $value, $depth = 0) use ($mapper, &$handler, $iteration) {
             if($mapper instanceof RecursiveMapperInterface) {
                 if($mapper->hasChildren($key, $value, $depth)) {
-                    foreach($value as $k => &$vv)
-                        $vv = $handler($k, $vv, $depth+1);
-                    return $value;
+                    return $iteration($value, $depth+1);
                 }
             }
             return $mapper->map($key, $value);
         };
 
-        if(is_array($collection)) {
-            foreach($collection as $key => &$value) {
-                $value = $handler($key, $value);
-            }
-        } else {
-            $changes = [];
-            foreach($collection as $key => $value) {
-                $val = $handler($key, $value);
-                if($val !== $value)
-                    $changes[$key] = $val;
-            }
-            if($changes) {
-                foreach($changes as $key => $value)
-                    $collection[$key] = $value;
-            }
-        }
-
-
-        return $collection;
+        return $iteration($collection);
     }
 
     /**
