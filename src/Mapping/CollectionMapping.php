@@ -59,9 +59,23 @@ class CollectionMapping
             return $mapper->map($key, $value);
         };
 
-        foreach($collection as $key => &$value) {
-            $value = $handler($key, $value);
+        if(is_array($collection)) {
+            foreach($collection as $key => &$value) {
+                $value = $handler($key, $value);
+            }
+        } else {
+            $changes = [];
+            foreach($collection as $key => $value) {
+                $val = $handler($key, $value);
+                if($val !== $value)
+                    $changes[$key] = $val;
+            }
+            if($changes) {
+                foreach($changes as $key => $value)
+                    $collection[$key] = $value;
+            }
         }
+
 
         return $collection;
     }
