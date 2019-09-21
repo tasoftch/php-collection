@@ -91,24 +91,41 @@ abstract class AbstractDependencyCollection extends AbstractOrderedCollection
         });
 
         // Then create the real tree (real dependency elements) of dependencies and required references
-        array_walk($wrappers, function(DependencyCollectonElement $element) {
+
+        $createdDependencies = [];
+
+        $dependencyResolver = function(DependencyCollectonElement $element) use (&$dependencyResolver, &$createdDependencies) {
             foreach($element->getDependencies() as $depName) {
-                /** @var DependencyCollectonElement $dep */
-                $dep = $this->collection[$depName] ?? NULL;
+                if(!isset($element->_realDependencies[$depName])) {
+                    if(!isset($this->collection[$depName])) {
+                        // Dependency does not exist. create it if possible
+                        $this->collection[$depName] = NULL;
 
-                // Let the implementation decide what to do if a dependency does not exist
-                if($dep === NULL && ($dep = $this->getUnexistingRequiredElement($depName)) == NULL)
-                    continue;
+                        /** @var DependencyCollectonElement $dep */
+                        if($dep = $this->getUnexistingRequiredElement($depName)) {
+                            if(!isset($dep->_realDependencies))
+                                $dep->_realDependencies = [];
+                            if(!isset($dep->_realDepends))
+                                $dep->_realDepends = [];
 
-                if(!isset($dep->_realDependencies))
-                    $dep->_realDependencies = [];
-                if(!isset($dep->_realDepends))
-                    $dep->_realDepends = [];
+                            $dependencyResolver($dep);
+                            $this->collection[$depName] = $dep;
+                            $createdDependencies[$depName] = $dep;
+                        } else
+                            continue;
+                    } else
+                        $dep = $this->collection[$depName];
 
-                $element->_realDependencies[] = $dep;
-                $dep->_realDepends[] = $element;
+                    $element->_realDependencies[$depName] = $dep;
+                    $dep->_realDepends[$element->getName()] = $element;
+                }
             }
-        });
+        };
+
+        array_walk($wrappers, $dependencyResolver);
+
+        if($createdDependencies)
+            $wrappers = array_merge($wrappers, $createdDependencies);
 
         $initial = [];
         if(count($wrappers)>1) {
