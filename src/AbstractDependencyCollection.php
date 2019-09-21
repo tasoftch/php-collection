@@ -100,6 +100,11 @@ abstract class AbstractDependencyCollection extends AbstractOrderedCollection
                 if($dep === NULL && ($dep = $this->getUnexistingRequiredElement($depName)) == NULL)
                     continue;
 
+                if(!isset($dep->_realDependencies))
+                    $dep->_realDependencies = [];
+                if(!isset($dep->_realDepends))
+                    $dep->_realDepends = [];
+
                 $element->_realDependencies[] = $dep;
                 $dep->_realDepends[] = $element;
             }
