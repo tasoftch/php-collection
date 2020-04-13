@@ -24,7 +24,7 @@
 namespace TASoft\Collection\Element;
 
 /**
- * Elements in containered collections are wrapped in objects of  class ContainerElementInterfaces.
+ * Elements in containered collections are wrapped in instances of ContainerElementInterfaces.
  * @package TASoft\Collection
  */
 interface ContainerElementInterface
