@@ -31,7 +31,7 @@ use TASoft\Collection\Element\ContainerElementInterface;
  */
 abstract class AbstractOrderedCollection extends AbstractContaineredCollection implements OrderedCollectionInterface
 {
-    private $_orderedCollection;
+    protected $_orderedCollection;
 
     /**
      * Call this method every time the collection changes to reorder collection on next use

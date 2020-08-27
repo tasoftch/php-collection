@@ -274,7 +274,7 @@ abstract class AbstractDependencyCollection extends AbstractOrderedCollection
     }
 
     /**
-     * Returns dependencies of an element or NULL if the element does not exist
+     * Returns the registered dependency names of an element or NULL if the element does not exist
      *
      * @param string $name
      * @return array|null
@@ -285,4 +285,124 @@ abstract class AbstractDependencyCollection extends AbstractOrderedCollection
             return $element->getDependencies();
         return NULL;
     }
+
+	/**
+	 * Gets the real dependencies of an element
+	 *
+	 * @param string $name
+	 * @return array|null
+	 */
+    public function getResolvedElementDependencies(string $name): ?array {
+    	$this->getOrderedElements();
+    	$element = $this->collection[$name] ?? NULL;
+    	if($element instanceof DependencyCollectonElement) {
+    		if(isset($element->_realDependencies)) {
+    			return array_map(function(DependencyCollectonElement $V) {
+    				return $V->getElement();
+				}, $element->_realDependencies);
+			}
+		}
+    	return NULL;
+	}
+
+	/**
+	 * Gets all elements depending on the specified element
+	 *
+	 * @param string $name
+	 * @return array|null
+	 */
+	public function getResolvedElementDepends(string $name): ?array {
+		$this->getOrderedElements();
+		$element = $this->collection[$name] ?? NULL;
+		if($element instanceof DependencyCollectonElement) {
+			if(isset($element->_realDepends)) {
+				return array_map(function(DependencyCollectonElement $V) {
+					return $V->getElement();
+				}, $element->_realDepends);
+			}
+		}
+		return NULL;
+	}
+
+	/**
+	 * Gets an identifier containing recursive array tree of the dependencies.
+	 *
+	 *
+	 * @param string $name
+	 * @param int $depth
+	 * @return array|null
+	 */
+	public function getDependencyBranches(string $name, int $depth = 10): ?array {
+		$iterator = function($name, $deep) use ($depth, &$iterator) {
+			if($deep < $depth) {
+				$deps = $this->getResolvedElementDependencies($name);
+				$dependencies = [];
+
+				foreach (array_keys($deps) as $dK) {
+					$dependencies[$dK] = $iterator($dK, $deep+1);
+				}
+
+				return $dependencies;
+			}
+			return false;
+		};
+
+		return $iterator($name, 1);
+	}
+
+	/**
+	 * Gets all dependencies of the specified element.
+	 *
+	 * @param string $name
+	 * @param int $depth
+	 * @return array|null
+	 */
+	public function getRecursiveDependencies(string $name, int $depth = 10): ?array {
+		$element = $this->collection[$name] ?? NULL;
+		if($element instanceof DependencyCollectonElement) {
+			$dependencies = [];
+			$iterator = function($name, $deep) use ($depth, &$iterator, &$dependencies) {
+				if($deep < $depth) {
+					$deps = $this->getResolvedElementDependencies($name);
+					foreach ($deps as $dK => $dep) {
+						if(!isset($dependencies[$dK])) {
+							$dependencies[$dK] = $dep;
+							$iterator($dK, $deep+1);
+						}
+					}
+				}
+			};
+			$iterator($name, 1);
+			return $dependencies;
+		}
+		return NULL;
+	}
+
+	/**
+	 * Gets all elements that depends on the specified element.
+	 *
+	 * @param string $name
+	 * @param int $depth
+	 * @return array|null
+	 */
+	public function getRecursiveDepends(string $name, int $depth = 10): ?array {
+		$element = $this->collection[$name] ?? NULL;
+		if($element instanceof DependencyCollectonElement) {
+			$dependencies = [];
+			$iterator = function($name, $deep) use ($depth, &$iterator, &$dependencies) {
+				if($deep < $depth) {
+					$deps = $this->getResolvedElementDepends($name);
+					foreach ($deps as $dK => $dep) {
+						if(!isset($dependencies[$dK])) {
+							$dependencies[$dK] = $dep;
+							$iterator($dK, $deep+1);
+						}
+					}
+				}
+			};
+			$iterator($name, 1);
+			return $dependencies;
+		}
+		return NULL;
+	}
 }
