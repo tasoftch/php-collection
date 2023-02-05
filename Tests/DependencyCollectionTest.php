@@ -30,6 +30,7 @@
 
 use PHPUnit\Framework\TestCase;
 use TASoft\Collection\DependencyCollection;
+use TASoft\Collection\Exception\CircularDependencyException;
 
 class DependencyCollectionTest extends TestCase
 {
@@ -71,6 +72,7 @@ class DependencyCollectionTest extends TestCase
         $dc->add('Bettina', 2, ["thomas"]); // circular dependency.
 
 
+		$this->expectException(CircularDependencyException::class);
         print_r( array_keys($dc->getOrderedElements()) );
     }
 
@@ -83,7 +85,7 @@ class DependencyCollectionTest extends TestCase
         $dc->add('Daniela', 2, ["Priska"]);
         $dc->add('Priska', 2, ["Bettina"]);
         $dc->add('Bettina', 2, ["Daniela"]); // also circular dependency but entry point stays
-
+		$this->expectException(CircularDependencyException::class);
         print_r( array_keys($dc->getOrderedElements()) );
     }
 
@@ -117,6 +119,7 @@ class DependencyCollectionTest extends TestCase
         $dc->add('Daniela', 2);
         $dc->add("Priska", 3, ["Daniela", "unexistent"]);
 
+		$this->expectException(\PHPUnit\Framework\Error\Warning::class);
         $this->assertEquals(['Daniela', 'Priska', 'thomas', 'Bettina'], array_keys($dc->getOrderedElements()));
     }
 

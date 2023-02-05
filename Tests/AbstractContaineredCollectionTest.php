@@ -31,6 +31,7 @@
 use TASoft\Collection\AbstractContaineredCollection;
 use PHPUnit\Framework\TestCase;
 use TASoft\Collection\EqualObjectsTrait;
+use TASoft\Collection\Exception\InvalidCollectionElementException;
 use TASoft\Collection\StrictEqualObjectsTrait;
 use TASoft\Collection\Element\PriorityCollectionElement;
 use TASoft\Collection\PriorityCollection;
@@ -103,6 +104,7 @@ class AbstractContaineredCollectionTest extends TestCase
      * @expectedException \InvalidArgumentException
      */
     public function testInvalidConstructor() {
+		$this->expectException(InvalidArgumentException::class);
         $collection = new class("Hello World!") extends AbstractContaineredCollection {
             use EqualObjectsTrait;
 
@@ -177,10 +179,9 @@ class AbstractContaineredCollectionTest extends TestCase
         $this->assertEquals("theKey", $collection->indexOf(56));
     }
 
-    /**
-     * @expectedException \TASoft\Collection\Exception\DuplicatedObjectException
-     */
     public function testDuplicates() {
+		$this->expectException(\TASoft\Collection\Exception\DuplicatedObjectException::class);
+
         $collection = new class extends AbstractContaineredCollection {
             use EqualObjectsTrait;
 
@@ -209,10 +210,8 @@ class AbstractContaineredCollectionTest extends TestCase
         $collection->addElement("Test");
     }
 
-    /**
-     * @expectedException \TASoft\Collection\Exception\InvalidCollectionElementException
-     */
     public function testUnwrappableElement() {
+		$this->expectException(InvalidCollectionElementException::class);
         $collection = new class extends AbstractContaineredCollection {
             use EqualObjectsTrait;
 

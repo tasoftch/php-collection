@@ -23,6 +23,7 @@
 
 namespace TASoft\Collection;
 
+use ReturnTypeWillChange;
 use TASoft\Collection\Element\ContainerElementInterface;
 use TASoft\Collection\Exception\DuplicatedObjectException;
 use TASoft\Collection\Exception\InvalidCollectionElementException;
@@ -57,7 +58,7 @@ abstract class AbstractContaineredCollection extends AbstractCollection
         }
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return ($value = parent::offsetGet($offset)) ? $value->getElement() : NULL;
     }
@@ -136,8 +137,11 @@ abstract class AbstractContaineredCollection extends AbstractCollection
      * @return ContainerElementInterface
      */
     protected function addElement($element, $info = NULL): ContainerElementInterface {
-        $key = $info[ static::INFO_INDEX_KEY ] ?? NULL;
-        unset($info[static::INFO_INDEX_KEY]);
+       if(is_array($info)) {
+		   $key = $info[ static::INFO_INDEX_KEY ];
+		   unset($info[static::INFO_INDEX_KEY]);
+	   } else
+		   $key = NULL;
 
         $wrapper = $this->getContainerWrapper($element, $info);
         if($wrapper instanceof ContainerElementInterface) {
@@ -175,7 +179,7 @@ abstract class AbstractContaineredCollection extends AbstractCollection
         $this->acceptingDuplicates = $acceptingDuplicates;
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new class($this->collection) implements \Iterator {
             private $collection;
@@ -184,27 +188,27 @@ abstract class AbstractContaineredCollection extends AbstractCollection
                 $this->collection = $collection;
             }
 
-            public function current()
+            #[ReturnTypeWillChange] public function current()
             {
                 return current($this->collection)->getElement();
             }
 
-            public function next()
+            #[ReturnTypeWillChange] public function next()
             {
                 return next($this->collection);
             }
 
-            public function key()
-            {
+            public function key(): int|string|null
+			{
                 return key($this->collection);
             }
 
-            public function valid()
-            {
+            public function valid(): bool
+			{
                 return $this->key() !== NULL;
             }
 
-            public function rewind()
+            #[ReturnTypeWillChange] public function rewind()
             {
                 reset($this->collection);
             }

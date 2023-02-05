@@ -23,6 +23,7 @@
 
 namespace TASoft\Collection;
 
+use ReturnTypeWillChange;
 use TASoft\Collection\Exception\ImmutableCollectionException;
 
 /**
@@ -53,8 +54,8 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * Make collection countable
      * @return int
      */
-    public function count()
-    {
+    public function count(): int
+	{
         return count($this->collection);
     }
 
@@ -62,8 +63,8 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * Make collection iterable
      * @return \ArrayIterator|\Traversable
      */
-    public function getIterator()
-    {
+    public function getIterator(): \Traversable
+	{
         return new \ArrayIterator($this->collection);
     }
 
@@ -73,7 +74,7 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    #[ReturnTypeWillChange] public function offsetExists($offset)
     {
         return isset($this->collection[$offset]);
     }
@@ -84,8 +85,8 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
-    {
+    public function offsetGet($offset): mixed
+	{
         return $this->collection[$offset] ?? NULL;
     }
 
@@ -95,7 +96,7 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    #[ReturnTypeWillChange] public function offsetSet($offset, $value)
     {
         $e = new ImmutableCollectionException("Collection is immutable");
         $e->setCollection($this);
@@ -107,7 +108,7 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      *
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    #[ReturnTypeWillChange] public function offsetUnset($offset)
     {
         $e = new ImmutableCollectionException("Collection is immutable");
         $e->setCollection($this);
@@ -120,7 +121,8 @@ abstract class AbstractCollection implements CollectionInterface, \IteratorAggre
      * @param $object
      * @return bool
      */
-    public function contains($object) {
+    public function contains($object)
+	{
         foreach($this->collection as $item) {
             if($this->objectsAreEqual($item ,$object))
                 return true;

@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 use TASoft\Collection\AbstractCollection;
 use TASoft\Collection\CollectionInterface;
 use TASoft\Collection\DefaultCollection;
+use TASoft\Collection\Exception\DuplicatedObjectException;
 use TASoft\Collection\Exception\ImmutableCollectionException;
 use TASoft\Collection\ImmutableCollection;
 use TASoft\Collection\SortDescriptor\DefaultSortDescriptor;
@@ -60,6 +61,7 @@ class DefaultCollectionTest extends TestCase
      * @expectedException InvalidArgumentException
      */
     public function testInvalidConstruction() {
+		$this->expectException(InvalidArgumentException::class);
         $collection = new DefaultCollection("Hello World!");
     }
 
@@ -118,7 +120,7 @@ class DefaultCollectionTest extends TestCase
      */
     public function testMakeIterableToAbstractCollection() {
         $collection = NULL;
-
+		$this->expectException(Error::class);
         $iterator = new ArrayIterator([1, 2, 3]);
         $this->assertEquals($collection, AbstractCollection::makeCollection($iterator));
     }
@@ -139,6 +141,8 @@ class DefaultCollectionTest extends TestCase
      * @expectedException TASoft\Collection\Exception\ImmutableCollectionException
      */
     public function testImmutableKeyAccess() {
+		$this->expectException(ImmutableCollectionException::class);
+
         $collection = new ImmutableCollection([1]);
         try {
             $collection[] = 4;
@@ -153,7 +157,9 @@ class DefaultCollectionTest extends TestCase
      * @expectedException TASoft\Collection\Exception\ImmutableCollectionException
      */
     public function testImmutableUnsetAccess() {
-        $collection = new ImmutableCollection([1]);
+		$this->expectException(ImmutableCollectionException::class);
+
+		$collection = new ImmutableCollection([1]);
         unset($collection[3]);
     }
 
@@ -229,6 +235,7 @@ class DefaultCollectionTest extends TestCase
      * @expectedException TASoft\Collection\Exception\DuplicatedObjectException
      */
     public function testDeniedDuplicates() {
+		$this->expectException(DuplicatedObjectException::class);
         $collection = new DefaultCollection([1, 2, 4]);
         $collection->setAcceptsDuplicates(false);
 

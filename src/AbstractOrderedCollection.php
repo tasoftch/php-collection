@@ -62,7 +62,7 @@ abstract class AbstractOrderedCollection extends AbstractContaineredCollection i
      * Creates an iterator that iterates over ordered contents
      * @return \ArrayIterator|\Traversable
      */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->getOrderedElements());
     }

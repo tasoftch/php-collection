@@ -113,7 +113,7 @@ class TaggedCollection extends AbstractContaineredCollection
     /**
      * @inheritDoc
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): array|null
     {
         $list = [];
         foreach($this->yieldElements($offset) as $element)
