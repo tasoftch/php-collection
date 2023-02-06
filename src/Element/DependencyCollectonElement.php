@@ -30,6 +30,8 @@ class DependencyCollectonElement implements ContainerElementInterface
     private $dependencies;
     private $name;
 
+	public $_realDependencies, $_realDepends;
+
     /**
      * DependencyCollectonElement constructor.
      * @param $element
